@@ -1,0 +1,13 @@
+{
+    "name": "ahmedateftefa17/codeigniter-lang-excel",
+    "type": "project",
+    "require": {
+        "phpoffice/phpspreadsheet": "^1.8"
+    },
+    "authors": [
+        {
+            "name": "Ahmed Atef",
+            "email": "ahmedateftefa17@gmail.com"
+        }
+    ]
+}
