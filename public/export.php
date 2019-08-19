@@ -63,6 +63,7 @@
           </form>
           <?php
 if (isset($_POST['lang'])) {
+    require 'WordCounter.php';
     $lang     = $_POST['lang'];
     $lang_dir = "../lang/$lang";
     if (is_dir($lang_dir)) {
@@ -107,10 +108,14 @@ if (isset($_POST['lang'])) {
                     $sheet->setTitle($lang_file_name);
                     if (count($lang_file_array)) {
                         $line = 1;
+                        $sheet_words_counter = 0;
                         foreach ($lang_file_array as $key => $value) {
                             if (is_string($value)) {
+                                $line_words_counter = WordCounter::countLineWords($value);
+                                $sheet_words_counter += $line_words_counter;
                                 $sheet->setCellValue("A$line", $key);
                                 $sheet->setCellValue("B$line", $value);
+                                $sheet->setCellValue("C$line", $line_words_counter);
                                 $line++;
                             } else {
                                 $sheet->setCellValue("A$line", $key);
@@ -123,8 +128,11 @@ if (isset($_POST['lang'])) {
                                 if (count($value)) {
                                     foreach ($value as $k => $v) {
                                         if (is_string($v)) {
+                                            $line_words_counter = WordCounter::countLineWords($v);
+                                            $sheet_words_counter += $line_words_counter;
                                             $sheet->setCellValue("A$line", $k);
                                             $sheet->setCellValue("B$line", $v);
+                                            $sheet->setCellValue("C$line", $line_words_counter);
                                             $line++;
                                         } else {
                                             $sheet->setCellValue("A$line", $k);
@@ -136,8 +144,11 @@ if (isset($_POST['lang'])) {
                                             $line++;
                                             if (count($v)) {
                                                 foreach ($v as $k2 => $v2) {
+                                                    $line_words_counter = WordCounter::countLineWords($v2);
+                                                    $sheet_words_counter += $line_words_counter;
                                                     $sheet->setCellValue("A$line", $k2);
                                                     $sheet->setCellValue("B$line", $v2);
+                                                    $sheet->setCellValue("C$line", $line_words_counter);
                                                     $line++;
                                                 }
                                             }
@@ -160,9 +171,11 @@ if (isset($_POST['lang'])) {
                                 $line++;
                             }
                         }
+                        $sheet->setCellValue("C$line", $sheet_words_counter);
                     }
                     $sheet->getColumnDimension('A')->setAutoSize(true);
                     $sheet->getColumnDimension('B')->setAutoSize(true);
+                    $sheet->getColumnDimension('C')->setAutoSize(true);
                 }
                 $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
                 $writer->save("../tmp/exports/$file_name.xlsx");
